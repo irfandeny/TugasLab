@@ -1,6 +1,7 @@
 package com.data;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import com.util.iMenu;
 import books.Buku;
@@ -31,30 +32,36 @@ public class Student extends User implements iMenu {
         Scanner input = new Scanner(System.in);
         boolean selesai = false;
         while (!selesai) {
-            System.out.println("===== Student Menu =====");
-            System.out.println("1. Pinjam Buku");
-            System.out.println("2. Tampilkan Buku yang dipinjam");
-            System.out.println("3. Kembalikan buku");
-            System.out.println("4. Logout");
-            System.out.print("Pilihan Opsi (1-4): ");
-            int pilihan = input.nextInt();
-            switch (pilihan) {
-                case 1:
-                    choiceBooks();
-                    break;
-                case 2:
-                    showBorrowedBooks();
-                    break;
-                case 3:
-                    returnBooks();
-                    break;
-                case 4:
-                    selesai = true;
-                    logout();
-                    System.out.println("dari student menu");
-                    break;
-                default:
-                    System.out.println("Pilihan tidak tersedia");
+            try {
+                System.out.println("===== Student Menu =====");
+                System.out.println("1. Pinjam Buku");
+                System.out.println("2. Tampilkan Buku yang dipinjam");
+                System.out.println("3. Kembalikan buku");
+                System.out.println("4. Logout");
+                System.out.print("Pilihan Opsi (1-4): ");
+                int pilihan = input.nextInt();
+                input.nextLine();
+                switch (pilihan) {
+                    case 1:
+                        choiceBooks();
+                        break;
+                    case 2:
+                        showBorrowedBooks();
+                        break;
+                    case 3:
+                        returnBooks();
+                        break;
+                    case 4:
+                        selesai = true;
+                        logout();
+                        System.out.println("dari student menu");
+                        break;
+                    default:
+                        System.out.println("Pilihan tidak tersedia");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Pilihan harus berupa angka (1-4). Silakan coba lagi.");
+                input.nextLine();
             }
         }
     }

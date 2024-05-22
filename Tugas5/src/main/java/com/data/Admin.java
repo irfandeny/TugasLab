@@ -1,14 +1,14 @@
 package com.data;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.UUID;
-
 import com.util.iMenu;
-
 import books.HistoryBook;
 import books.StoryBook;
 import books.TextBook;
+import exception.custom.IllegalAdminAccess;
 
 public class Admin extends User implements iMenu {
     String adminUsername = "admin";
@@ -16,43 +16,48 @@ public class Admin extends User implements iMenu {
     public static ArrayList<Student> studentList = new ArrayList<>();
     Scanner scanner =  new Scanner(System.in);
 
-    
+
     @Override
     public void Menu() {
         Scanner input = new Scanner(System.in);
         boolean selesai = false;
         while (!selesai) {
-            System.out.println("===== Admin Menu =====");
-            System.out.println("1. Tambah Buku");
-            System.out.println("2. Hapus Buku");
-            System.out.println("3. Tampilkan Daftar Buku");
-            System.out.println("4. Tampilkan Daftar Mahasiswa");
-            System.out.println("5. Tambah Mahasiswa");
-            System.out.println("6. Log out");
-            System.out.print("Pilihan Opsi (1-6): ");
-            int pilihan = input.nextInt();
-            switch (pilihan) {
-                case 1:
-                    inputBook();
-                    break;
-                case 2:
-                    hapusBuku();
-                    break;
-                case 3:
-                    displayBook();
-                    break;
-                case 4:
-                    displayStudents();
-                    break;
-                case 5:
-                    addStudent();
-                    break;
-                case 6:
-                    selesai = true;
-                    System.out.println("Logging out... from admin menu");
-                    break;
-                default:
-                    System.out.println("Pilihan tidak tersedia");
+            try {
+                System.out.println("===== Admin Menu =====");
+                System.out.println("1. Tambah Buku");
+                System.out.println("2. Hapus Buku");
+                System.out.println("3. Tampilkan Daftar Buku");
+                System.out.println("4. Tampilkan Daftar Mahasiswa");
+                System.out.println("5. Tambah Mahasiswa");
+                System.out.println("6. Log out");
+                System.out.print("Pilihan Opsi (1-6): ");
+                int pilihan = input.nextInt();
+                switch (pilihan) {
+                    case 1:
+                        inputBook();
+                        break;
+                    case 2:
+                        hapusBuku();
+                        break;
+                    case 3:
+                        displayBook();
+                        break;
+                    case 4:
+                        displayStudents();
+                        break;
+                    case 5:
+                        addStudent();
+                        break;
+                    case 6:
+                        selesai = true;
+                        System.out.println("Logging out... from admin menu");
+                        break;
+                    default:
+                        System.out.println("Pilihan tidak tersedia");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Pilihan harus berupa angka (1-6). Silakan coba lagi.");
+                input.nextLine();
             }
         }
     }
@@ -121,8 +126,11 @@ public class Admin extends User implements iMenu {
         System.out.println("==================================================================================================");
     }
 
-    public boolean isAdmin(String inputUsername, String inputPassword) {
-        return this.adminUsername.equals(inputUsername) && this.adminPassword.equals(inputPassword);
+    public boolean isAdmin(String inputUsername, String inputPassword) throws IllegalAdminAccess {
+        if (!this.adminUsername.equals(inputUsername) || !this.adminPassword.equals(inputPassword)) {
+            throw new IllegalAdminAccess("Invalid credentials");
+        }
+        return true;
     }
 
     public static String generateId() {
@@ -152,22 +160,14 @@ public class Admin extends User implements iMenu {
         System.out.print("Masukkan ID buku yang ingin dihapus: ");
         String id = scanner.nextLine();
 
-        int index = -1;
-        for (int i = 0; i < User.bookList.length; i++) {
-            if (User.bookList[i] != null && User.bookList[i].getId().equals(id)) {
-                index = i;
-                break;
+        for (int i = 0; i < User.bookList.size(); i++) {
+            if (User.bookList.get(i) != null && User.bookList.get(i).getId().equals(id)) {
+                User.bookList.remove(i);
+                System.out.println("Buku berhasil dihapus");
+                return;
             }
         }
-        if (index != -1) {
-            for (int i = index; i < User.bookList.length - 1; i++) {
-                User.bookList[i] = User.bookList[i + 1];
-            }
-            User.bookList[User.bookList.length - 1] = null;
-            System.out.println("Buku berhasil dihapus");
-        } else {
-            System.out.println("Buku tidak ditemukan");
-        }
+        System.out.println("Buku tidak ditemukan");
     }
 
 }

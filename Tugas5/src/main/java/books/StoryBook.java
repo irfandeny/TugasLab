@@ -22,7 +22,7 @@ public class StoryBook extends Buku {
         scanner.nextLine();
         setId(Admin.generateId());
         setCategory(category);
-        User.bookList[User.bookCount++] = new StoryBook(getId(), getTitle(), getAuthor(), getCategory(), getStock());
+        User.bookList.add(new StoryBook(getId(), getTitle(), getAuthor(), getCategory(), getStock()));
         System.out.println("Buku berhasil ditambahkan");
     }
 }

@@ -22,7 +22,7 @@ public class HistoryBook extends Buku {
         scanner.nextLine();
         setCategory(category);
         setId(Admin.generateId());
-        User.bookList[User.bookCount++] = new HistoryBook(getId(), getTitle(), getAuthor(), getCategory(), getStock());
+        User.bookList.add(new HistoryBook(getId(), getTitle(), getAuthor(), getCategory(), getStock()));
         System.out.println("Buku berhasil ditambahkan");
     }
 }

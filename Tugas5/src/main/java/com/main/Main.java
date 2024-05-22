@@ -6,6 +6,7 @@ import com.data.Admin;
 import com.data.Student;
 import com.data.User;
 import com.util.iMenu;
+import exception.custom.IllegalAdminAccess;
 
 public class Main {
     private final Scanner scanner = new Scanner(System.in);
@@ -79,11 +80,15 @@ public class Main {
         inputUsername = scanner.nextLine();
         System.out.print("Enter password: ");
         inputPassword = scanner.nextLine();
-        if (admin.isAdmin(inputUsername, inputPassword)) {
-            System.out.println("Login berhasil. Selamat datang " + inputUsername);
-            menuAdmin.Menu();
-        } else {
-            System.out.println("Username atau password salah. Silakan coba lagi.");
+        try {
+            if (admin.isAdmin(inputUsername, inputPassword)) {
+                System.out.println("Login berhasil. Selamat datang " + inputUsername);
+                menuAdmin.Menu();
+            } else {
+                System.out.println("Username atau password salah. Silakan coba lagi.");
+            }
+        } catch (IllegalAdminAccess e) {
+            System.out.println(e.getMessage());
         }
     }
 
