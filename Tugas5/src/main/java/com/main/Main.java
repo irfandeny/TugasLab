@@ -1,7 +1,7 @@
 package com.main;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
-
 import com.data.Admin;
 import com.data.Student;
 import com.data.User;
@@ -26,20 +26,25 @@ public class Main {
             System.out.println("2. Login as Admin");
             System.out.println("3. Exit");
             System.out.print("Pilihan Opsi (1-3): ");
-            int pilihan = input.nextInt();
-            switch (pilihan) {
-                case 1:
-                    inputNim();
-                    break;
-                case 2:
-                    loginAsAdmin();
-                    break;
-                case 3:
-                    selesai = true;
-                    System.out.println("Program selesai, Exit program");
-                    break;
-                default:
-                    System.out.println("Pilihan tidak tersedia");
+            try {
+                int pilihan = input.nextInt();
+                switch (pilihan) {
+                    case 1:
+                        inputNim();
+                        break;
+                    case 2:
+                        loginAsAdmin();
+                        break;
+                    case 3:
+                        selesai = true;
+                        System.out.println("Program selesai, Exit program");
+                        break;
+                    default:
+                        System.out.println("Pilihan tidak tersedia");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Pilihan harus berupa angka (1-3). Silakan coba lagi.");
+                input.nextLine(); // clear the input buffer
             }
         }
     }
