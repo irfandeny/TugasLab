@@ -8,6 +8,7 @@ import com.data.User;
 import com.util.iMenu;
 import exception.custom.IllegalAdminAccess;
 
+
 public class Main {
     private final Scanner scanner = new Scanner(System.in);
     Admin admin = new Admin();
@@ -44,7 +45,7 @@ public class Main {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Pilihan harus berupa angka (1-3). Silakan coba lagi.");
-                input.nextLine(); // clear the input buffer
+                input.nextLine();
             }
         }
     }
