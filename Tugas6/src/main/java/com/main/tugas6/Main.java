@@ -2,6 +2,7 @@ package com.main.tugas6;
 
 import com.data.AdminMenu;
 import com.data.StudentMenu;
+import com.data.User;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,6 +19,7 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class Main extends Application {
+    AdminMenu admin = new AdminMenu();
 
     @Override
     public void start(Stage primaryStage) {
@@ -39,6 +41,8 @@ public class Main extends Application {
             adminGrid.setVgap(10);
             adminGrid.setPadding(new Insets(25, 25, 25, 25));
 
+            Label labelAdmin = new Label("Masukkan Akun Anda");
+            adminGrid.add(labelAdmin, 0, 0);
             Label userName = new Label("User Name\t:");
             adminGrid.add(userName, 0, 1);
             TextField userField = new TextField();
@@ -79,8 +83,35 @@ public class Main extends Application {
 
         Button loginStudent = new Button("Login Student");
         loginStudent.setOnAction(e -> {
-            StudentMenu studentMenu = new StudentMenu();
-            studentMenu.showStudentMenu(primaryStage);
+            GridPane studentGrid = new GridPane();
+            studentGrid.setAlignment(Pos.CENTER);
+            studentGrid.setHgap(10);
+            studentGrid.setVgap(10);
+            studentGrid.setPadding(new Insets(25, 25, 25, 25));
+
+            Label labelAdmin = new Label("Masukkan NIM anda");
+            studentGrid.add(labelAdmin, 0, 0, 2, 1);
+            Label nimLabel = new Label("NIM\t:");
+            studentGrid.add(nimLabel, 0, 1);
+            TextField nimField = new TextField();
+            studentGrid.add(nimField, 1, 1);
+
+            Button loginMenuStudent = new Button("Login");
+            studentGrid.add(loginMenuStudent, 0, 2);
+            loginMenuStudent.setOnAction(f -> {
+                String nim = nimField.getText();
+                StudentMenu student = admin.getStudentByNim(nim);
+                if (student != null) {
+                    StudentMenu studentMenu = new StudentMenu();
+                    studentMenu.showStudentMenu(primaryStage);
+                } else {
+                    System.out.println("NIM tidak ditemukan, silakan coba lagi");
+                }
+            });
+
+            Scene successScene = new Scene(studentGrid, 320, 250);
+            primaryStage.setScene(successScene);
+            primaryStage.show();
         });
         grid.add(loginStudent, 1, 1);
 
@@ -96,5 +127,22 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public Main() {
+        this.addTempStudent();
+        this.addTempBook();
+    }
+
+    public void addTempStudent() {
+        admin.addedStudent("Keysya", "202310370311363", "Teknik", "Informatika");
+        admin.addedStudent("Irfan", "202310370311377", "Teknik", "Informatika");
+    }
+
+    public void addTempBook(){
+        User.addBook("388c-e681-9152", "Foxit eSign", "Author1", "Accessibility", 1);
+        User.addBook("d95e-28c4-9523", "Nana Buku", "Author2", "Category", 2);
+        User.addBook("sgsg-ytgf-we54", "Sejarah", "Author3", "Sejarah", 8);
+        User.addBook("rdgf-rtgf-evgt", "Sejarah", "Author3","Sejarah" , 8);
     }
 }
