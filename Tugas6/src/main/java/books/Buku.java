@@ -8,6 +8,7 @@ public class Buku {
     private String author;
     private String category;
     private int stock;
+    private int daysToReturn;
 
     public Buku(String id, String title, String author, String category, int stock) {
         this.id = id;
@@ -56,10 +57,17 @@ public class Buku {
     public void setStock(int stock) {
         this.stock = stock;
     }
+    public int getDaysToReturn() {
+        return daysToReturn;
+    }
+    public void setDaysToReturn(int daysToReturn) {
+        this.daysToReturn = daysToReturn;
+    }
 
     public static String generateId() {
         String uuid = UUID.randomUUID().toString();
         String[] uuidParts = uuid.split("-");
         return uuidParts[0].substring(0, 4) + "-" + uuidParts[1].substring(0, 4) + "-" + uuidParts[2].substring(0, 4);
     }
+
 }

@@ -130,7 +130,6 @@ public class AdminMenu extends User {
                 showAlert(Alert.AlertType.ERROR, "Gagal", "Buku tidak ditemukan");
             }
         });
-
         gridRemove.add(removeButton, 1, 2);
 
         Button backButton = new Button("Back");

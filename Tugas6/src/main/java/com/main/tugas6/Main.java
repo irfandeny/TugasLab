@@ -64,14 +64,18 @@ public class Main extends Application {
             adminGrid.add(errorLabel, 1, 3);
 
             btn.setOnAction(r -> {
-                String username = userField.getText();
-                String password = pwField.getText();
+                try {
+                    String username = userField.getText();
+                    String password = pwField.getText();
 
-                if (username.equals("fanden") && password.equals("377")) {
-                    AdminMenu adminMenu = new AdminMenu();
-                    adminMenu.showAdminMenu(primaryStage);
-                } else {
-                    errorLabel.setText("Password Atau Username Salah");
+                    if (username.equals("fanden") && password.equals("377")) {
+                        AdminMenu adminMenu = new AdminMenu();
+                        adminMenu.showAdminMenu(primaryStage);
+                    } else {
+                        throw new Exception("Password Atau Username Salah");
+                    }
+                } catch (Exception ex) {
+                    errorLabel.setText(ex.getMessage());
                 }
             });
 
