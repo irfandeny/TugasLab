@@ -1,12 +1,17 @@
 package com.data;
 
 import books.Buku;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -17,7 +22,7 @@ public class StudentMenu {
     String faculty;
     String studyProgram;
 
-    private static ArrayList<Buku> borrowedBooks = new ArrayList<>();
+    private static final ArrayList<Buku> borrowedBooks = new ArrayList<>();
 
     public StudentMenu(String name, String nim, String faculty, String studyProgram) {
         this.name = name;
@@ -25,40 +30,11 @@ public class StudentMenu {
         this.faculty = faculty;
         this.studyProgram = studyProgram;
     }
-
     public StudentMenu() {
     }
 
     public String getNim() {
         return nim;
-    }
-
-    public void setNim(String nim) {
-        this.nim = nim;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(String faculty) {
-        this.faculty = faculty;
-    }
-
-    public String getStudyProgram() {
-        return studyProgram;
-    }
-
-    public void setStudyProgram(String studyProgram) {
-        this.studyProgram = studyProgram;
     }
 
     public void showStudentMenu(Stage primaryStage) {
@@ -69,7 +45,8 @@ public class StudentMenu {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         Label label = new Label("Student Menu");
-        grid.add(label, 0, 0);
+        label.setFont(Font.font("Times new roman", FontWeight.BOLD, 18));
+        grid.add(label, 0, 0, 2, 1);
 
         Button viewBooksButton = new Button("View Books");
         viewBooksButton.setOnAction(e -> displayBooks(primaryStage));
@@ -88,11 +65,11 @@ public class StudentMenu {
 
         grid.add(viewBooksButton, 0, 1);
         grid.add(borrowBooksButton, 0, 2);
-        grid.add(showBorrowedBooksButton, 0, 3);
-        grid.add(returnBooksButton, 0, 4);
-        grid.add(logoutButton, 0, 5);
+        grid.add(showBorrowedBooksButton, 1, 1);
+        grid.add(returnBooksButton, 1, 2);
+        grid.add(logoutButton, 0, 3);
 
-        Scene studentMenuScene = new Scene(grid, 320, 250);
+        Scene studentMenuScene = new Scene(grid, 420, 350);
         primaryStage.setScene(studentMenuScene);
         primaryStage.show();
     }
@@ -102,16 +79,40 @@ public class StudentMenu {
         vbox.setPadding(new Insets(10));
         vbox.setSpacing(10);
 
-        for (Buku buku : User.bookList) {
-            Label bookLabel = new Label(buku.getTitle() + " - " + buku.getAuthor() + " - " + buku.getCategory() + " - Stock: " + buku.getStock());
-            vbox.getChildren().add(bookLabel);
-        }
+        TableView<Buku> table = new TableView<>();
+        table.setEditable(false);
+
+        TableColumn<Buku, String> idColumn = new TableColumn<>("ID");
+        idColumn.setMinWidth(50);
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Buku, String> titleColumn = new TableColumn<>("Title");
+        titleColumn.setMinWidth(150);
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+
+        TableColumn<Buku, String> authorColumn = new TableColumn<>("Author");
+        authorColumn.setMinWidth(100);
+        authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+
+        TableColumn<Buku, String> categoryColumn = new TableColumn<>("Category");
+        categoryColumn.setMinWidth(100);
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+
+        TableColumn<Buku, Integer> stockColumn = new TableColumn<>("Stock");
+        stockColumn.setMinWidth(50);
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+
+        table.getColumns().addAll(idColumn, titleColumn, authorColumn, categoryColumn, stockColumn);
+
+        ObservableList<Buku> books = FXCollections.observableArrayList(User.bookList);
+        table.setItems(books);
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> showStudentMenu(primaryStage));
-        vbox.getChildren().add(backButton);
 
-        Scene viewBooksScene = new Scene(vbox, 320, 250);
+        vbox.getChildren().addAll(table, backButton);
+
+        Scene viewBooksScene = new Scene(vbox, 420, 350);
         primaryStage.setScene(viewBooksScene);
     }
 
@@ -174,7 +175,7 @@ public class StudentMenu {
 
         vbox.getChildren().addAll(bookIdField, daysField, borrowButton, backButton);
 
-        Scene borrowBooksScene = new Scene(vbox, 320, 250);
+        Scene borrowBooksScene = new Scene(vbox, 420, 350);
         primaryStage.setScene(borrowBooksScene);
     }
 
@@ -196,7 +197,7 @@ public class StudentMenu {
         backButton.setOnAction(e -> showStudentMenu(primaryStage));
         vbox.getChildren().add(backButton);
 
-        Scene borrowedBooksScene = new Scene(vbox, 320, 250);
+        Scene borrowedBooksScene = new Scene(vbox, 420, 350);
         primaryStage.setScene(borrowedBooksScene);
     }
 
@@ -241,7 +242,7 @@ public class StudentMenu {
 
         vbox.getChildren().addAll(bookIdField, returnButton, backButton);
 
-        Scene returnBooksScene = new Scene(vbox, 320, 250);
+        Scene returnBooksScene = new Scene(vbox, 420, 350);
         primaryStage.setScene(returnBooksScene);
     }
 }

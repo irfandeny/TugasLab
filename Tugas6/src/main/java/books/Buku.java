@@ -69,5 +69,4 @@ public class Buku {
         String[] uuidParts = uuid.split("-");
         return uuidParts[0].substring(0, 4) + "-" + uuidParts[1].substring(0, 4) + "-" + uuidParts[2].substring(0, 4);
     }
-
 }

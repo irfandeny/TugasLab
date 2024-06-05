@@ -7,10 +7,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -42,7 +39,8 @@ public class Main extends Application {
             adminGrid.setPadding(new Insets(25, 25, 25, 25));
 
             Label labelAdmin = new Label("Masukkan Akun Anda");
-            adminGrid.add(labelAdmin, 0, 0);
+            labelAdmin.setFont(Font.font("Times new roman", FontWeight.BOLD, 18));
+            adminGrid.add(label, 0, 0, 2, 1);
             Label userName = new Label("User Name\t:");
             adminGrid.add(userName, 0, 1);
             TextField userField = new TextField();
@@ -78,8 +76,11 @@ public class Main extends Application {
                     errorLabel.setText(ex.getMessage());
                 }
             });
+            Button backButton = new Button("Back");
+            backButton.setOnAction(f -> start(primaryStage));
+            adminGrid.add(backButton,0,4);
 
-            Scene successScene = new Scene(adminGrid, 320, 250);
+            Scene successScene = new Scene(adminGrid, 420, 350);
             primaryStage.setScene(successScene);
             primaryStage.show();
         });
@@ -93,27 +94,40 @@ public class Main extends Application {
             studentGrid.setVgap(10);
             studentGrid.setPadding(new Insets(25, 25, 25, 25));
 
-            Label labelAdmin = new Label("Masukkan NIM anda");
-            studentGrid.add(labelAdmin, 0, 0, 2, 1);
+            Label labelStudent = new Label("Masukkan NIM anda");
+            labelStudent.setFont(Font.font("Times new roman", FontWeight.BOLD, 18));
+            studentGrid.add(labelStudent, 0, 0, 2, 1);
             Label nimLabel = new Label("NIM\t:");
             studentGrid.add(nimLabel, 0, 1);
             TextField nimField = new TextField();
             studentGrid.add(nimField, 1, 1);
 
             Button loginMenuStudent = new Button("Login");
-            studentGrid.add(loginMenuStudent, 0, 2);
+            studentGrid.add(loginMenuStudent, 1, 2);
             loginMenuStudent.setOnAction(f -> {
-                String nim = nimField.getText();
-                StudentMenu student = admin.getStudentByNim(nim);
-                if (student != null) {
-                    StudentMenu studentMenu = new StudentMenu();
-                    studentMenu.showStudentMenu(primaryStage);
-                } else {
-                    System.out.println("NIM tidak ditemukan, silakan coba lagi");
+                try {
+                    String nim = nimField.getText();
+                    StudentMenu student = admin.getStudentByNim(nim);
+                    if (student != null) {
+                        StudentMenu studentMenu = new StudentMenu();
+                        studentMenu.showStudentMenu(primaryStage);
+                    } else {
+                        throw new IllegalArgumentException("NIM tidak ditemukan");
+                    }
+                } catch (IllegalArgumentException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText(ex.getMessage());
+                    alert.showAndWait();
                 }
             });
 
-            Scene successScene = new Scene(studentGrid, 320, 250);
+            Button backButton = new Button("Back");
+            backButton.setOnAction(f -> start(primaryStage));
+            studentGrid.add(backButton,0,2);
+
+            Scene successScene = new Scene(studentGrid, 420, 350);
             primaryStage.setScene(successScene);
             primaryStage.show();
         });
@@ -123,7 +137,7 @@ public class Main extends Application {
         exitButton.setOnAction(e -> System.exit(0));
         grid.add(exitButton, 0, 2);
 
-        Scene scene = new Scene(grid, 320, 250);
+        Scene scene = new Scene(grid, 420, 350);
         primaryStage.setTitle("Form Login");
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -1,16 +1,20 @@
 package com.data;
 
+import books.Buku;
 import books.HistoryBook;
 import books.StoryBook;
 import books.TextBook;
 import com.main.tugas6.Main;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 
 public class AdminMenu extends User {
@@ -44,14 +48,17 @@ public class AdminMenu extends User {
         Button logoutButton = new Button("Log Out");
         logoutButton.setOnAction(e -> new Main().start(primaryStage));
 
-        grid.add(addBookButton, 0, 1);
-        grid.add(removeBookButton, 0, 2);
-        grid.add(viewBooksButton, 0, 3);
-        grid.add(viewStudentButton, 0, 4);
-        grid.add(addStudentButton, 0, 5);
-        grid.add(logoutButton, 0, 6);
+        grid.add(viewBooksButton, 0, 1);
+        grid.add(addBookButton, 0, 2);
+        grid.add(removeBookButton, 0, 3);
+        grid.add(viewStudentButton, 1, 1);
+        grid.add(addStudentButton, 1, 2);
+        HBox hbBtn = new HBox(10);
+        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
+        hbBtn.getChildren().add(logoutButton);
+        grid.add(hbBtn, 1, 4);
 
-        Scene adminMenuScene = new Scene(grid, 320, 350);
+        Scene adminMenuScene = new Scene(grid, 420, 350);
         primaryStage.setScene(adminMenuScene);
         primaryStage.show();
     }
@@ -86,13 +93,13 @@ public class AdminMenu extends User {
 
         gridAdd.add(textBookButton, 0, 1);
         gridAdd.add(storyBookButton, 0, 2);
-        gridAdd.add(historyBookButton, 0, 3);
+        gridAdd.add(historyBookButton, 1, 1);
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> showAdminMenu(primaryStage));
         gridAdd.add(backButton, 0, 4);
 
-        Scene addBookScene = new Scene(gridAdd, 320, 250);
+        Scene addBookScene = new Scene(gridAdd, 420, 350);
         primaryStage.setScene(addBookScene);
         primaryStage.show();
     }
@@ -136,7 +143,7 @@ public class AdminMenu extends User {
         backButton.setOnAction(e -> showAdminMenu(primaryStage));
         gridRemove.add(backButton, 1, 3);
 
-        Scene removeBookScene = new Scene(gridRemove, 320, 250);
+        Scene removeBookScene = new Scene(gridRemove, 420, 350);
         primaryStage.setScene(removeBookScene);
         primaryStage.show();
     }
@@ -149,29 +156,36 @@ public class AdminMenu extends User {
         gridView.setPadding(new Insets(25, 25, 25, 25));
 
         Label labelView = new Label("Daftar Buku");
-        Label labelView1 = new Label("Id Buku - judul buku - stock");
         gridView.add(labelView, 0, 0);
-        gridView.add(labelView1,0,1);
 
-        StringBuilder booksList = new StringBuilder();
-        for (int i = 0; i < User.bookList.size(); i++) {
-            booksList.append(User.bookList.get(i).getId()).append(" - ")
-                    .append(User.bookList.get(i).getTitle()).append(" - ")
-                    .append(User.bookList.get(i).getStock()).append("\n");
-        }
+        TableView<Buku> bookTableView = new TableView<>();
+        bookTableView.setEditable(false);
 
-        TextArea booksArea = new TextArea(booksList.toString());
-        booksArea.setEditable(false);
-        gridView.add(booksArea, 0, 2);
+        TableColumn<Buku, String> idColumn = new TableColumn<>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Buku, String> titleColumn = new TableColumn<>("Title");
+        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
+
+        TableColumn<Buku, Integer> stockColumn = new TableColumn<>("Stock");
+        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
+
+        bookTableView.getColumns().addAll(idColumn, titleColumn, stockColumn);
+
+        ObservableList<Buku> books = FXCollections.observableArrayList(User.bookList);
+        bookTableView.setItems(books);
+
+        gridView.add(bookTableView, 0, 1);
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> showAdminMenu(primaryStage));
-        gridView.add(backButton, 0, 3);
+        gridView.add(backButton, 0, 2);
 
-        Scene viewBooksScene = new Scene(gridView, 320, 250);
+        Scene viewBooksScene = new Scene(gridView, 420, 350);
         primaryStage.setScene(viewBooksScene);
         primaryStage.show();
     }
+
 
     private void showViewStudentsMenu(Stage primaryStage) {
         GridPane gridView = new GridPane();
@@ -183,23 +197,31 @@ public class AdminMenu extends User {
         Label labelView = new Label("Daftar Mahasiswa");
         gridView.add(labelView, 0, 0);
 
-        StringBuilder studentsList = new StringBuilder();
-        for (StudentMenu student : studentList) {
-            studentsList.append(student.getNim()).append(" - ")
-                    .append(student.getName()).append(" - ")
-                    .append(student.getFaculty()).append(" - ")
-                    .append(student.getStudyProgram()).append("\n");
-        }
+        TableView<StudentMenu> table = new TableView<>();
+        TableColumn<StudentMenu, String> nimColumn = new TableColumn<>("NIM");
+        nimColumn.setCellValueFactory(new PropertyValueFactory<>("nim"));
 
-        TextArea studentsArea = new TextArea(studentsList.toString());
-        studentsArea.setEditable(false);
-        gridView.add(studentsArea, 0, 1);
+        TableColumn<StudentMenu, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<StudentMenu, String> facultyColumn = new TableColumn<>("Faculty");
+        facultyColumn.setCellValueFactory(new PropertyValueFactory<>("faculty"));
+
+        TableColumn<StudentMenu, String> studyProgramColumn = new TableColumn<>("Study Program");
+        studyProgramColumn.setCellValueFactory(new PropertyValueFactory<>("studyProgram"));
+
+        table.getColumns().addAll(nimColumn, nameColumn, facultyColumn, studyProgramColumn);
+
+        ObservableList<StudentMenu> students = FXCollections.observableArrayList(studentList);
+        table.setItems(students);
+
+        gridView.add(table, 0, 1);
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> showAdminMenu(primaryStage));
         gridView.add(backButton, 0, 2);
 
-        Scene viewStudentsScene = new Scene(gridView, 320, 250);
+        Scene viewStudentsScene = new Scene(gridView, 420, 350);
         primaryStage.setScene(viewStudentsScene);
         primaryStage.show();
     }
@@ -258,7 +280,7 @@ public class AdminMenu extends User {
         backButton.setOnAction(e -> showAdminMenu(primaryStage));
         gridAdd.add(backButton, 1, 6);
 
-        Scene addStudentScene = new Scene(gridAdd, 400, 350);
+        Scene addStudentScene = new Scene(gridAdd, 420, 350);
         primaryStage.setScene(addStudentScene);
         primaryStage.show();
     }
