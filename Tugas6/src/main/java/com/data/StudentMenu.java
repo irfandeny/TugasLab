@@ -1,6 +1,7 @@
 package com.data;
 
 import books.Buku;
+import com.main.tugas6.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -30,11 +31,39 @@ public class StudentMenu {
         this.faculty = faculty;
         this.studyProgram = studyProgram;
     }
-    public StudentMenu() {
-    }
+
+    public StudentMenu() {}
 
     public String getNim() {
         return nim;
+    }
+
+    public void setNim(String nim) {
+        this.nim = nim;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(String faculty) {
+        this.faculty = faculty;
+    }
+
+    public String getStudyProgram() {
+        return studyProgram;
+    }
+
+    public void setStudyProgram(String studyProgram) {
+        this.studyProgram = studyProgram;
     }
 
     public void showStudentMenu(Stage primaryStage) {
@@ -61,7 +90,7 @@ public class StudentMenu {
         returnBooksButton.setOnAction(e -> returnBooks(primaryStage));
 
         Button logoutButton = new Button("Logout");
-        logoutButton.setOnAction(e -> primaryStage.close());
+        logoutButton.setOnAction(e -> new Main().start(primaryStage));
 
         grid.add(viewBooksButton, 0, 1);
         grid.add(borrowBooksButton, 0, 2);
@@ -105,6 +134,7 @@ public class StudentMenu {
         table.getColumns().addAll(idColumn, titleColumn, authorColumn, categoryColumn, stockColumn);
 
         ObservableList<Buku> books = FXCollections.observableArrayList(User.bookList);
+        table.getItems().clear();
         table.setItems(books);
 
         Button backButton = new Button("Back");
@@ -134,13 +164,11 @@ public class StudentMenu {
             try {
                 daysToReturn = Integer.parseInt(daysField.getText());
                 if (daysToReturn > 60) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "The maximum borrowing period is 60 days.");
-                    alert.showAndWait();
+                    showAlert(Alert.AlertType.ERROR, "Error", "The maximum borrowing period is 60 days.");
                     return;
                 }
             } catch (NumberFormatException ex) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Please enter a valid number of days.");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.ERROR, "Error", "Please enter a valid number of days.");
                 return;
             }
 
@@ -153,20 +181,22 @@ public class StudentMenu {
             }
 
             if (bukuygPinjam == null) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Book ID not found.");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.ERROR, "Error", "Book ID not found.");
                 return;
             }
 
-            if (bukuygPinjam.getStock() > 0) {
-                bukuygPinjam.setStock(bukuygPinjam.getStock() - 1);
-                bukuygPinjam.setDaysToReturn(daysToReturn);
-                borrowedBooks.add(bukuygPinjam);
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Book borrowed successfully for " + daysToReturn + " days.");
-                alert.showAndWait();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Book is out of stock.");
-                alert.showAndWait();
+            try {
+                if (bukuygPinjam.getStock() > 0) {
+                    bukuygPinjam.setStock(bukuygPinjam.getStock() - 1);
+                    bukuygPinjam.setDaysToReturn(daysToReturn);
+                    borrowedBooks.add(bukuygPinjam);
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Book borrowed successfully for " + daysToReturn + " days.");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Error", "Book is out of stock.");
+                }
+            } catch (Exception ex) {
+                showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while borrowing the book.");
+                ex.printStackTrace();
             }
         });
 
@@ -221,19 +251,22 @@ public class StudentMenu {
             }
 
             if (bukuPinjam == null) {
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Book ID not found.");
-                alert.showAndWait();
+                showAlert(Alert.AlertType.ERROR, "Error", "Book ID not found.");
                 return;
             }
 
-            for (Buku buku : borrowedBooks) {
-                if (buku.getId().equals(idBuku)) {
-                    buku.setStock(buku.getStock() + 1);
-                    borrowedBooks.remove(buku);
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Book returned successfully.");
-                    alert.showAndWait();
-                    break;
+            try {
+                for (Buku buku : borrowedBooks) {
+                    if (buku.getId().equals(idBuku)) {
+                        buku.setStock(buku.getStock() + 1);
+                        borrowedBooks.remove(buku);
+                        showAlert(Alert.AlertType.INFORMATION, "Success", "Book returned successfully.");
+                        break;
+                    }
                 }
+            } catch (Exception ex) {
+                showAlert(Alert.AlertType.ERROR, "Error", "An error occurred while returning the book.");
+                ex.printStackTrace();
             }
         });
 
@@ -244,5 +277,13 @@ public class StudentMenu {
 
         Scene returnBooksScene = new Scene(vbox, 420, 350);
         primaryStage.setScene(returnBooksScene);
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

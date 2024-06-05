@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 public class AdminMenu extends User {
     public static ArrayList<StudentMenu> studentList = new ArrayList<>();
+    private boolean isviewBookMenushow = false;
+    private boolean isviewStudentMenushow = false;
 
     public void showAdminMenu(Stage primaryStage) {
         GridPane grid = new GridPane();
@@ -53,6 +55,7 @@ public class AdminMenu extends User {
         grid.add(removeBookButton, 0, 3);
         grid.add(viewStudentButton, 1, 1);
         grid.add(addStudentButton, 1, 2);
+
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(logoutButton);
@@ -149,6 +152,10 @@ public class AdminMenu extends User {
     }
 
     private void showViewBooksMenu(Stage primaryStage) {
+        if(isviewBookMenushow){
+            return;
+        }
+        isviewBookMenushow = true;
         GridPane gridView = new GridPane();
         gridView.setAlignment(Pos.CENTER);
         gridView.setHgap(10);
@@ -173,6 +180,7 @@ public class AdminMenu extends User {
         bookTableView.getColumns().addAll(idColumn, titleColumn, stockColumn);
 
         ObservableList<Buku> books = FXCollections.observableArrayList(User.bookList);
+        bookTableView.getItems().clear();
         bookTableView.setItems(books);
 
         gridView.add(bookTableView, 0, 1);
@@ -186,8 +194,11 @@ public class AdminMenu extends User {
         primaryStage.show();
     }
 
-
     private void showViewStudentsMenu(Stage primaryStage) {
+        if(isviewStudentMenushow){
+            return;
+        }
+        isviewStudentMenushow = true;
         GridPane gridView = new GridPane();
         gridView.setAlignment(Pos.CENTER);
         gridView.setHgap(10);
@@ -213,6 +224,7 @@ public class AdminMenu extends User {
         table.getColumns().addAll(nimColumn, nameColumn, facultyColumn, studyProgramColumn);
 
         ObservableList<StudentMenu> students = FXCollections.observableArrayList(studentList);
+        table.getItems().clear();
         table.setItems(students);
 
         gridView.add(table, 0, 1);
@@ -266,11 +278,21 @@ public class AdminMenu extends User {
             String nim = nimField.getText();
             String faculty = facultyField.getText();
             String studyProgram = studyProgramField.getText();
-            if (name.isEmpty() || nim.isEmpty() || faculty.isEmpty() || studyProgram.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Gagal", "Semua field harus diisi.");
-            } else {
-                addedStudent(name, nim, faculty, studyProgram);
-                showAlert(Alert.AlertType.INFORMATION, "Sukses", "Mahasiswa berhasil ditambahkan.");
+
+            try {
+                if (name.isEmpty() || nim.isEmpty() || faculty.isEmpty() || studyProgram.isEmpty()) {
+                    showAlert(Alert.AlertType.ERROR, "Gagal", "Semua field harus diisi.");
+                } else if (nim.length() != 15) {
+                    throw new IllegalArgumentException("NIM harus terdiri dari 15 angka.");
+                } else {
+                    Long.parseLong(nim); // Cek apakah NIM adalah angka
+                    addedStudent(name, nim, faculty, studyProgram);
+                    showAlert(Alert.AlertType.INFORMATION, "Sukses", "Mahasiswa berhasil ditambahkan.");
+                }
+            } catch (NumberFormatException ex) {
+                showAlert(Alert.AlertType.ERROR, "Gagal", "NIM harus berupa angka.");
+            } catch (IllegalArgumentException ex) {
+                showAlert(Alert.AlertType.ERROR, "Gagal", ex.getMessage());
             }
         });
 
@@ -284,6 +306,7 @@ public class AdminMenu extends User {
         primaryStage.setScene(addStudentScene);
         primaryStage.show();
     }
+
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);

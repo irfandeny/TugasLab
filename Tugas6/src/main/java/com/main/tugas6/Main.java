@@ -24,7 +24,7 @@ public class Main extends Application {
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
+        grid.setPadding(new Insets(15, 15, 15, 15));
 
         Label label = new Label("Login as Student or Admin");
         label.setFont(Font.font("Times new roman", FontWeight.BOLD, 18));
@@ -36,11 +36,11 @@ public class Main extends Application {
             adminGrid.setAlignment(Pos.CENTER);
             adminGrid.setHgap(10);
             adminGrid.setVgap(10);
-            adminGrid.setPadding(new Insets(25, 25, 25, 25));
+            adminGrid.setPadding(new Insets(15, 15, 15, 15));
 
             Label labelAdmin = new Label("Masukkan Akun Anda");
             labelAdmin.setFont(Font.font("Times new roman", FontWeight.BOLD, 18));
-            adminGrid.add(label, 0, 0, 2, 1);
+            adminGrid.add(labelAdmin, 0, 0, 2, 1);
             Label userName = new Label("User Name\t:");
             adminGrid.add(userName, 0, 1);
             TextField userField = new TextField();
@@ -76,9 +76,10 @@ public class Main extends Application {
                     errorLabel.setText(ex.getMessage());
                 }
             });
+
             Button backButton = new Button("Back");
             backButton.setOnAction(f -> start(primaryStage));
-            adminGrid.add(backButton,0,4);
+            adminGrid.add(backButton, 0, 4);
 
             Scene successScene = new Scene(adminGrid, 420, 350);
             primaryStage.setScene(successScene);
@@ -86,51 +87,7 @@ public class Main extends Application {
         });
         grid.add(loginAdmin, 0, 1);
 
-        Button loginStudent = new Button("Login Student");
-        loginStudent.setOnAction(e -> {
-            GridPane studentGrid = new GridPane();
-            studentGrid.setAlignment(Pos.CENTER);
-            studentGrid.setHgap(10);
-            studentGrid.setVgap(10);
-            studentGrid.setPadding(new Insets(25, 25, 25, 25));
-
-            Label labelStudent = new Label("Masukkan NIM anda");
-            labelStudent.setFont(Font.font("Times new roman", FontWeight.BOLD, 18));
-            studentGrid.add(labelStudent, 0, 0, 2, 1);
-            Label nimLabel = new Label("NIM\t:");
-            studentGrid.add(nimLabel, 0, 1);
-            TextField nimField = new TextField();
-            studentGrid.add(nimField, 1, 1);
-
-            Button loginMenuStudent = new Button("Login");
-            studentGrid.add(loginMenuStudent, 1, 2);
-            loginMenuStudent.setOnAction(f -> {
-                try {
-                    String nim = nimField.getText();
-                    StudentMenu student = admin.getStudentByNim(nim);
-                    if (student != null) {
-                        StudentMenu studentMenu = new StudentMenu();
-                        studentMenu.showStudentMenu(primaryStage);
-                    } else {
-                        throw new IllegalArgumentException("NIM tidak ditemukan");
-                    }
-                } catch (IllegalArgumentException ex) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText(null);
-                    alert.setContentText(ex.getMessage());
-                    alert.showAndWait();
-                }
-            });
-
-            Button backButton = new Button("Back");
-            backButton.setOnAction(f -> start(primaryStage));
-            studentGrid.add(backButton,0,2);
-
-            Scene successScene = new Scene(studentGrid, 420, 350);
-            primaryStage.setScene(successScene);
-            primaryStage.show();
-        });
+        Button loginStudent = createLoginStudentButton(primaryStage);
         grid.add(loginStudent, 1, 1);
 
         Button exitButton = new Button("Exit");
@@ -148,19 +105,92 @@ public class Main extends Application {
     }
 
     public Main() {
-        this.addTempStudent();
-        this.addTempBook();
+        try {
+            this.addTempStudent();
+            this.addTempBook();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void addTempStudent() {
-        admin.addedStudent("Keysya", "202310370311363", "Teknik", "Informatika");
-        admin.addedStudent("Irfan", "202310370311377", "Teknik", "Informatika");
+        try {
+            admin.addedStudent("Keysya", "202310370311363", "Teknik", "Informatika");
+            admin.addedStudent("Irfan", "202310370311377", "Teknik", "Informatika");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void addTempBook(){
-        User.addBook("388c-e681-9152", "Foxit eSign", "Author1", "Accessibility", 1);
-        User.addBook("d95e-28c4-9523", "Nana Buku", "Author2", "Category", 2);
-        User.addBook("sgsg-ytgf-we54", "Sejarah", "Author3", "Sejarah", 8);
-        User.addBook("rdgf-rtgf-evgt", "Sejarah", "Author3","Sejarah" , 8);
+    public void addTempBook() {
+        try {
+            User.addBook("388c-e681-9152", "Foxit eSign", "Author1", "Accessibility", 1);
+            User.addBook("d95e-28c4-9523", "Nana Buku", "Author2", "Category", 2);
+            User.addBook("sgsg-ytgf-we54", "Sejarah", "Author3", "Sejarah", 8);
+            User.addBook("rdgf-rtgf-evgt", "Sejarah", "Author3", "Sejarah", 8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Button createLoginStudentButton(Stage primaryStage) {
+        Button loginStudentButton = new Button("Login Student");
+        loginStudentButton.setOnAction(e -> showStudentLoginMenu(primaryStage));
+        return loginStudentButton;
+    }
+
+    private void showStudentLoginMenu(Stage primaryStage) {
+        GridPane studentGrid = new GridPane();
+        studentGrid.setAlignment(Pos.CENTER);
+        studentGrid.setHgap(10);
+        studentGrid.setVgap(10);
+        studentGrid.setPadding(new Insets(15, 15, 15, 15));
+
+        Label labelStudent = new Label("Masukkan NIM anda");
+        labelStudent.setFont(Font.font("Times new roman", FontWeight.BOLD, 18));
+        studentGrid.add(labelStudent, 0, 0, 2, 1);
+        Label nimLabel = new Label("NIM\t:");
+        studentGrid.add(nimLabel, 0, 1);
+        TextField nimField = new TextField();
+        studentGrid.add(nimField, 1, 1);
+
+        Button loginMenuStudent = new Button("Login");
+        studentGrid.add(loginMenuStudent, 1, 2);
+        loginMenuStudent.setOnAction(f -> {
+            try {
+                String nim = nimField.getText();
+                if (nim.length() != 15) {
+                    throw new IllegalArgumentException("NIM harus terdiri dari 15 angka.");
+                }
+                Long.parseLong(nim);
+                StudentMenu student = admin.getStudentByNim(nim);
+                if (student != null) {
+                    StudentMenu studentMenu = new StudentMenu();
+                    studentMenu.showStudentMenu(primaryStage);
+                } else {
+                    throw new IllegalArgumentException("NIM tidak ditemukan");
+                }
+            } catch (NumberFormatException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("NIM harus berupa angka.");
+                alert.showAndWait();
+            } catch (IllegalArgumentException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText(ex.getMessage());
+                alert.showAndWait();
+            }
+        });
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(f -> start(primaryStage));
+        studentGrid.add(backButton, 0, 2);
+
+        Scene successScene = new Scene(studentGrid, 420, 350);
+        primaryStage.setScene(successScene);
+        primaryStage.show();
     }
 }

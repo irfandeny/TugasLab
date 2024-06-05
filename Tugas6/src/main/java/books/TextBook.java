@@ -43,29 +43,35 @@ public class TextBook extends Buku {
 
         Button addButton = new Button("Add Book");
         addButton.setOnAction(e -> {
-            setTitle(titleField.getText());
-            setAuthor(authorField.getText());
-            setStock(Integer.parseInt(stockField.getText()));
-            setCategory(category);
-            setId(Buku.generateId());
-            if (category.isEmpty()) {
-                showAlert(Alert.AlertType.ERROR, "Gagal", "Semua field harus diisi.");
-            } else {
-                User.bookList.add(new HistoryBook(getId(), getTitle(), getAuthor(), getCategory(), getStock()));
-                showAlert(Alert.AlertType.INFORMATION, "Sukses", "Buku berhasil ditambahkan.");
+            try {
+                setTitle(titleField.getText());
+                setAuthor(authorField.getText());
+                setStock(Integer.parseInt(stockField.getText()));
+                setCategory(category);
+                setId(Buku.generateId());
+                if (titleField.getText().isEmpty() || authorField.getText().isEmpty() || stockField.getText().isEmpty()) {
+                    showAlert(Alert.AlertType.ERROR, "Gagal", "Semua field harus diisi.");
+                } else {
+                    User.bookList.add(new TextBook(getId(), getTitle(), getAuthor(), getCategory(), getStock()));
+                    showAlert(Alert.AlertType.INFORMATION, "Sukses", "Buku berhasil ditambahkan.");
+                }
+            } catch (NumberFormatException ex) {
+                showAlert(Alert.AlertType.ERROR, "Gagal", "Stock harus berupa angka.");
+            } catch (Exception ex) {
+                showAlert(Alert.AlertType.ERROR, "Gagal", "Terjadi kesalahan: " + ex.getMessage());
             }
         });
         grid.add(addButton, 1, 5);
 
-
         Button backButton = new Button("Back");
+        grid.add(backButton, 1, 6);
         backButton.setOnAction(e -> new AdminMenu().showAdminMenu(primaryStage));
-        grid.add(backButton, 2, 5);
 
-        Scene scene = new Scene(grid, 300, 275);
+        Scene scene = new Scene(grid, 420, 350);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
