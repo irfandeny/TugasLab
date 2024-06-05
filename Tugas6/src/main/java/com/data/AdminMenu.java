@@ -13,16 +13,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import util.iMenu;
 import java.util.ArrayList;
 
-public class AdminMenu extends User {
+
+public class AdminMenu extends User implements iMenu {
     public static ArrayList<StudentMenu> studentList = new ArrayList<>();
-    private boolean isviewBookMenushow = false;
     private boolean isviewStudentMenushow = false;
 
-    public void showAdminMenu(Stage primaryStage) {
+    @Override
+    public void showMenu(Stage primaryStage) {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -30,36 +33,34 @@ public class AdminMenu extends User {
         grid.setPadding(new Insets(25, 25, 25, 25));
 
         Label label = new Label("Admin Menu");
-        grid.add(label, 0, 0);
-
-        Button addBookButton = new Button("Add Book");
-        addBookButton.setOnAction(e -> showAddBookMenu(primaryStage));
-
-        Button removeBookButton = new Button("Remove Book");
-        removeBookButton.setOnAction(e -> showRemoveBookMenu(primaryStage));
+        label.setFont(Font.font("Times new roman", FontWeight.BOLD, 18));
+        grid.add(label, 0, 0, 2, 1);
 
         Button viewBooksButton = new Button("View Books");
-        viewBooksButton.setOnAction(e -> showViewBooksMenu(primaryStage));
+        viewBooksButton.setOnAction(e -> showBooks(primaryStage));
 
-        Button viewStudentButton = new Button("View Students");
+        Button addBooksButton = new Button("Add Books");
+        addBooksButton.setOnAction(e -> showAddBookMenu(primaryStage));
+
+        Button removeBooksButton = new Button("Remove Books");
+        removeBooksButton.setOnAction(e -> showRemoveBookMenu(primaryStage));
+
+        Button viewStudentButton = new Button("View Student");
         viewStudentButton.setOnAction(e -> showViewStudentsMenu(primaryStage));
 
-        Button addStudentButton = new Button("Add Student");
-        addStudentButton.setOnAction(e -> showAddStudentMenu(primaryStage));
+        Button addStudentMenu = new Button("Add Student");
+        addStudentMenu.setOnAction(e -> showAddStudentMenu(primaryStage));
 
-        Button logoutButton = new Button("Log Out");
+
+        Button logoutButton = new Button("Logout");
         logoutButton.setOnAction(e -> new Main().start(primaryStage));
 
         grid.add(viewBooksButton, 0, 1);
-        grid.add(addBookButton, 0, 2);
-        grid.add(removeBookButton, 0, 3);
-        grid.add(viewStudentButton, 1, 1);
-        grid.add(addStudentButton, 1, 2);
-
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(logoutButton);
-        grid.add(hbBtn, 1, 4);
+        grid.add(addBooksButton, 0, 2);
+        grid.add(removeBooksButton, 0, 3);
+        grid.add(viewStudentButton,1,1);
+        grid.add(addStudentMenu,1,2);
+        grid.add(logoutButton, 0, 4);
 
         Scene adminMenuScene = new Scene(grid, 420, 350);
         primaryStage.setScene(adminMenuScene);
@@ -99,7 +100,7 @@ public class AdminMenu extends User {
         gridAdd.add(historyBookButton, 1, 1);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showAdminMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
         gridAdd.add(backButton, 0, 4);
 
         Scene addBookScene = new Scene(gridAdd, 420, 350);
@@ -143,7 +144,7 @@ public class AdminMenu extends User {
         gridRemove.add(removeButton, 1, 2);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showAdminMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
         gridRemove.add(backButton, 1, 3);
 
         Scene removeBookScene = new Scene(gridRemove, 420, 350);
@@ -151,42 +152,22 @@ public class AdminMenu extends User {
         primaryStage.show();
     }
 
-    private void showViewBooksMenu(Stage primaryStage) {
-        if(isviewBookMenushow){
-            return;
-        }
-        isviewBookMenushow = true;
+    @Override
+    public TableView<Buku> displayBooks(){
+        return super.displayBooks();
+    }
+
+    private void showBooks(Stage primaryStage) {
         GridPane gridView = new GridPane();
         gridView.setAlignment(Pos.CENTER);
         gridView.setHgap(10);
         gridView.setVgap(10);
         gridView.setPadding(new Insets(25, 25, 25, 25));
-
-        Label labelView = new Label("Daftar Buku");
-        gridView.add(labelView, 0, 0);
-
-        TableView<Buku> bookTableView = new TableView<>();
-        bookTableView.setEditable(false);
-
-        TableColumn<Buku, String> idColumn = new TableColumn<>("ID");
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        TableColumn<Buku, String> titleColumn = new TableColumn<>("Title");
-        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-
-        TableColumn<Buku, Integer> stockColumn = new TableColumn<>("Stock");
-        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
-        bookTableView.getColumns().addAll(idColumn, titleColumn, stockColumn);
-
-        ObservableList<Buku> books = FXCollections.observableArrayList(User.bookList);
-        bookTableView.getItems().clear();
-        bookTableView.setItems(books);
-
-        gridView.add(bookTableView, 0, 1);
+        TableView<Buku> table = displayBooks();
+        gridView.add(table,0,1);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showAdminMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
         gridView.add(backButton, 0, 2);
 
         Scene viewBooksScene = new Scene(gridView, 420, 350);
@@ -230,7 +211,7 @@ public class AdminMenu extends User {
         gridView.add(table, 0, 1);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showAdminMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
         gridView.add(backButton, 0, 2);
 
         Scene viewStudentsScene = new Scene(gridView, 420, 350);
@@ -299,7 +280,7 @@ public class AdminMenu extends User {
         gridAdd.add(addButton, 1, 5);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showAdminMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
         gridAdd.add(backButton, 1, 6);
 
         Scene addStudentScene = new Scene(gridAdd, 420, 350);
@@ -307,8 +288,8 @@ public class AdminMenu extends User {
         primaryStage.show();
     }
 
-
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
+    @Override
+    public void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);

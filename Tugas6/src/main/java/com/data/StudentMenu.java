@@ -2,22 +2,19 @@ package com.data;
 
 import books.Buku;
 import com.main.tugas6.Main;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-
+import util.iMenu;
 import java.util.ArrayList;
 
-public class StudentMenu {
+public class StudentMenu extends User implements iMenu {
     String nim;
     String name;
     String faculty;
@@ -66,7 +63,8 @@ public class StudentMenu {
         this.studyProgram = studyProgram;
     }
 
-    public void showStudentMenu(Stage primaryStage) {
+    @Override
+    public void showMenu(Stage primaryStage) {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -78,7 +76,7 @@ public class StudentMenu {
         grid.add(label, 0, 0, 2, 1);
 
         Button viewBooksButton = new Button("View Books");
-        viewBooksButton.setOnAction(e -> displayBooks(primaryStage));
+        viewBooksButton.setOnAction(e -> showBooks(primaryStage));
 
         Button borrowBooksButton = new Button("Borrow Books");
         borrowBooksButton.setOnAction(e -> borrowBooks(primaryStage));
@@ -103,47 +101,28 @@ public class StudentMenu {
         primaryStage.show();
     }
 
-    private void displayBooks(Stage primaryStage) {
-        VBox vbox = new VBox();
-        vbox.setPadding(new Insets(10));
-        vbox.setSpacing(10);
 
-        TableView<Buku> table = new TableView<>();
-        table.setEditable(false);
+    @Override
+    public TableView<Buku> displayBooks(){
+        return super.displayBooks();
+    }
 
-        TableColumn<Buku, String> idColumn = new TableColumn<>("ID");
-        idColumn.setMinWidth(50);
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        TableColumn<Buku, String> titleColumn = new TableColumn<>("Title");
-        titleColumn.setMinWidth(150);
-        titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-
-        TableColumn<Buku, String> authorColumn = new TableColumn<>("Author");
-        authorColumn.setMinWidth(100);
-        authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
-
-        TableColumn<Buku, String> categoryColumn = new TableColumn<>("Category");
-        categoryColumn.setMinWidth(100);
-        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
-
-        TableColumn<Buku, Integer> stockColumn = new TableColumn<>("Stock");
-        stockColumn.setMinWidth(50);
-        stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
-
-        table.getColumns().addAll(idColumn, titleColumn, authorColumn, categoryColumn, stockColumn);
-
-        ObservableList<Buku> books = FXCollections.observableArrayList(User.bookList);
-        table.getItems().clear();
-        table.setItems(books);
+    private void showBooks(Stage primaryStage) {
+        GridPane gridView = new GridPane();
+        gridView.setAlignment(Pos.CENTER);
+        gridView.setHgap(10);
+        gridView.setVgap(10);
+        gridView.setPadding(new Insets(25, 25, 25, 25));
+        TableView<Buku> table = displayBooks();
+        gridView.add(table,0,1);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showStudentMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
+        gridView.add(backButton, 0, 2);
 
-        vbox.getChildren().addAll(table, backButton);
-
-        Scene viewBooksScene = new Scene(vbox, 420, 350);
+        Scene viewBooksScene = new Scene(gridView, 420, 350);
         primaryStage.setScene(viewBooksScene);
+        primaryStage.show();
     }
 
     private void borrowBooks(Stage primaryStage) {
@@ -201,7 +180,7 @@ public class StudentMenu {
         });
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showStudentMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
 
         vbox.getChildren().addAll(bookIdField, daysField, borrowButton, backButton);
 
@@ -224,7 +203,7 @@ public class StudentMenu {
         }
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showStudentMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
         vbox.getChildren().add(backButton);
 
         Scene borrowedBooksScene = new Scene(vbox, 420, 350);
@@ -271,15 +250,15 @@ public class StudentMenu {
         });
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showStudentMenu(primaryStage));
+        backButton.setOnAction(e -> showMenu(primaryStage));
 
         vbox.getChildren().addAll(bookIdField, returnButton, backButton);
 
         Scene returnBooksScene = new Scene(vbox, 420, 350);
         primaryStage.setScene(returnBooksScene);
     }
-
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
+    @Override
+    public void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);

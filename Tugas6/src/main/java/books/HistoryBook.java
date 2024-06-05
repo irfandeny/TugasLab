@@ -65,7 +65,7 @@ public class HistoryBook extends Buku {
 
         Button backButton = new Button("Back");
         grid.add(backButton, 1, 6);
-        backButton.setOnAction(e -> new AdminMenu().showAdminMenu(primaryStage));
+        backButton.setOnAction(e -> new AdminMenu().showMenu(primaryStage));
 
         Scene scene = new Scene(grid, 420, 350);
         primaryStage.setScene(scene);

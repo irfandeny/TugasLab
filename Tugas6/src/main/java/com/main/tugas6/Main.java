@@ -3,6 +3,8 @@ package com.main.tugas6;
 import com.data.AdminMenu;
 import com.data.StudentMenu;
 import com.data.User;
+import exceptions.InvalidNimFormatException;
+import exceptions.NimNotFoundException;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -68,7 +70,7 @@ public class Main extends Application {
 
                     if (username.equals("fanden") && password.equals("377")) {
                         AdminMenu adminMenu = new AdminMenu();
-                        adminMenu.showAdminMenu(primaryStage);
+                        adminMenu.showMenu(primaryStage);
                     } else {
                         throw new Exception("Password Atau Username Salah");
                     }
@@ -87,7 +89,8 @@ public class Main extends Application {
         });
         grid.add(loginAdmin, 0, 1);
 
-        Button loginStudent = createLoginStudentButton(primaryStage);
+        Button loginStudent = new Button("Login Student");
+        loginStudent.setOnAction(e -> handleStudentLogin(primaryStage));
         grid.add(loginStudent, 1, 1);
 
         Button exitButton = new Button("Exit");
@@ -132,14 +135,7 @@ public class Main extends Application {
             e.printStackTrace();
         }
     }
-
-    private Button createLoginStudentButton(Stage primaryStage) {
-        Button loginStudentButton = new Button("Login Student");
-        loginStudentButton.setOnAction(e -> showStudentLoginMenu(primaryStage));
-        return loginStudentButton;
-    }
-
-    private void showStudentLoginMenu(Stage primaryStage) {
+    private void handleStudentLogin(Stage primaryStage) {
         GridPane studentGrid = new GridPane();
         studentGrid.setAlignment(Pos.CENTER);
         studentGrid.setHgap(10);
@@ -158,25 +154,15 @@ public class Main extends Application {
         studentGrid.add(loginMenuStudent, 1, 2);
         loginMenuStudent.setOnAction(f -> {
             try {
-                String nim = nimField.getText();
-                if (nim.length() != 15) {
-                    throw new IllegalArgumentException("NIM harus terdiri dari 15 angka.");
-                }
-                Long.parseLong(nim);
-                StudentMenu student = admin.getStudentByNim(nim);
+                validateNim(nimField.getText());
+                StudentMenu student = admin.getStudentByNim(nimField.getText());
                 if (student != null) {
                     StudentMenu studentMenu = new StudentMenu();
-                    studentMenu.showStudentMenu(primaryStage);
+                    studentMenu.showMenu(primaryStage);
                 } else {
-                    throw new IllegalArgumentException("NIM tidak ditemukan");
+                    throw new NimNotFoundException("NIM tidak ditemukan");
                 }
-            } catch (NumberFormatException ex) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText("NIM harus berupa angka.");
-                alert.showAndWait();
-            } catch (IllegalArgumentException ex) {
+            } catch (InvalidNimFormatException | NimNotFoundException ex) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText(null);
@@ -193,4 +179,16 @@ public class Main extends Application {
         primaryStage.setScene(successScene);
         primaryStage.show();
     }
+
+    private void validateNim(String nim) throws InvalidNimFormatException {
+        if (nim.length() != 15) {
+            throw new InvalidNimFormatException("NIM harus terdiri dari 15 angka.");
+        }
+        try {
+            Long.parseLong(nim);
+        } catch (NumberFormatException ex) {
+            throw new InvalidNimFormatException("NIM harus berupa angka.");
+        }
+    }
+
 }
