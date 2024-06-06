@@ -113,11 +113,14 @@ public class StudentMenu extends User implements iMenu {
         gridView.setHgap(10);
         gridView.setVgap(10);
         gridView.setPadding(new Insets(25, 25, 25, 25));
-        TableView<Buku> table = displayBooks();
-        gridView.add(table,0,1);
+        TableView<Buku> tableStudent = displayBooks();
+        gridView.add(tableStudent,0,1);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showMenu(primaryStage));
+        backButton.setOnAction(e -> {
+                    tableStudent.getItems().clear();
+                    showMenu(primaryStage);
+                });
         gridView.add(backButton, 0, 2);
 
         Scene viewBooksScene = new Scene(gridView, 420, 350);

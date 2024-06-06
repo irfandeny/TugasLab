@@ -19,10 +19,8 @@ import javafx.stage.Stage;
 import util.iMenu;
 import java.util.ArrayList;
 
-
 public class AdminMenu extends User implements iMenu {
     public static ArrayList<StudentMenu> studentList = new ArrayList<>();
-    private boolean isviewStudentMenushow = false;
 
     @Override
     public void showMenu(Stage primaryStage) {
@@ -51,15 +49,14 @@ public class AdminMenu extends User implements iMenu {
         Button addStudentMenu = new Button("Add Student");
         addStudentMenu.setOnAction(e -> showAddStudentMenu(primaryStage));
 
-
         Button logoutButton = new Button("Logout");
         logoutButton.setOnAction(e -> new Main().start(primaryStage));
 
         grid.add(viewBooksButton, 0, 1);
         grid.add(addBooksButton, 0, 2);
         grid.add(removeBooksButton, 0, 3);
-        grid.add(viewStudentButton,1,1);
-        grid.add(addStudentMenu,1,2);
+        grid.add(viewStudentButton, 1, 1);
+        grid.add(addStudentMenu, 1, 2);
         grid.add(logoutButton, 0, 4);
 
         Scene adminMenuScene = new Scene(grid, 420, 350);
@@ -153,7 +150,7 @@ public class AdminMenu extends User implements iMenu {
     }
 
     @Override
-    public TableView<Buku> displayBooks(){
+    public TableView<Buku> displayBooks() {
         return super.displayBooks();
     }
 
@@ -163,11 +160,15 @@ public class AdminMenu extends User implements iMenu {
         gridView.setHgap(10);
         gridView.setVgap(10);
         gridView.setPadding(new Insets(25, 25, 25, 25));
-        TableView<Buku> table = displayBooks();
-        gridView.add(table,0,1);
+
+        TableView<Buku> tableAdmin = displayBooks();
+        gridView.add(tableAdmin, 0, 1);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> showMenu(primaryStage));
+        backButton.setOnAction(e ->{
+            tableAdmin.getItems().clear();
+            showMenu(primaryStage);
+        });
         gridView.add(backButton, 0, 2);
 
         Scene viewBooksScene = new Scene(gridView, 420, 350);
@@ -176,37 +177,33 @@ public class AdminMenu extends User implements iMenu {
     }
 
     private void showViewStudentsMenu(Stage primaryStage) {
-        if(isviewStudentMenushow){
-            return;
-        }
-        isviewStudentMenushow = true;
         GridPane gridView = new GridPane();
         gridView.setAlignment(Pos.CENTER);
         gridView.setHgap(10);
         gridView.setVgap(10);
         gridView.setPadding(new Insets(25, 25, 25, 25));
 
-        Label labelView = new Label("Daftar Mahasiswa");
-        gridView.add(labelView, 0, 0);
-
         TableView<StudentMenu> table = new TableView<>();
-        TableColumn<StudentMenu, String> nimColumn = new TableColumn<>("NIM");
-        nimColumn.setCellValueFactory(new PropertyValueFactory<>("nim"));
+        table.setEditable(false);
 
         TableColumn<StudentMenu, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setMinWidth(150);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
+        TableColumn<StudentMenu, String> nimColumn = new TableColumn<>("NIM");
+        nimColumn.setMinWidth(150);
+        nimColumn.setCellValueFactory(new PropertyValueFactory<>("nim"));
+
         TableColumn<StudentMenu, String> facultyColumn = new TableColumn<>("Faculty");
+        facultyColumn.setMinWidth(150);
         facultyColumn.setCellValueFactory(new PropertyValueFactory<>("faculty"));
 
         TableColumn<StudentMenu, String> studyProgramColumn = new TableColumn<>("Study Program");
+        studyProgramColumn.setMinWidth(150);
         studyProgramColumn.setCellValueFactory(new PropertyValueFactory<>("studyProgram"));
 
-        table.getColumns().addAll(nimColumn, nameColumn, facultyColumn, studyProgramColumn);
-
-        ObservableList<StudentMenu> students = FXCollections.observableArrayList(studentList);
-        table.getItems().clear();
-        table.setItems(students);
+        table.getColumns().addAll(nameColumn, nimColumn, facultyColumn, studyProgramColumn);
+        updateStudentTableItems(table);
 
         gridView.add(table, 0, 1);
 
@@ -217,6 +214,11 @@ public class AdminMenu extends User implements iMenu {
         Scene viewStudentsScene = new Scene(gridView, 420, 350);
         primaryStage.setScene(viewStudentsScene);
         primaryStage.show();
+    }
+
+    private void updateStudentTableItems(TableView<StudentMenu> table) {
+        ObservableList<StudentMenu> students = FXCollections.observableArrayList(studentList);
+        table.setItems(students);
     }
 
     private void showAddStudentMenu(Stage primaryStage) {

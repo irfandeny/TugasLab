@@ -9,7 +9,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.util.ArrayList;
 
-
 public class User {
     public static ArrayList<Buku> bookList = new ArrayList<>();
 
@@ -17,10 +16,9 @@ public class User {
         bookList.add(new Buku(id, title, author, category, stock));
     }
 
-
     public TableView<Buku> displayBooks() {
-        TableView<Buku> table = new TableView<>();
-        table.setEditable(false);
+        TableView<Buku> tableDisplay = new TableView<>();
+        tableDisplay.setEditable(false);
 
         TableColumn<Buku, String> idColumn = new TableColumn<>("ID");
         idColumn.setMinWidth(50);
@@ -42,12 +40,14 @@ public class User {
         stockColumn.setMinWidth(50);
         stockColumn.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
-        table.getColumns().addAll(idColumn, titleColumn, authorColumn, categoryColumn, stockColumn);
-        table.getItems().clear();
+        tableDisplay.getColumns().addAll(idColumn, titleColumn, authorColumn, categoryColumn, stockColumn);
+        updateTableItems(tableDisplay);
+
+        return tableDisplay;
+    }
+
+    protected void updateTableItems(TableView<Buku> table) {
         ObservableList<Buku> books = FXCollections.observableArrayList(bookList);
         table.setItems(books);
-
-        return table;
     }
 }
-
