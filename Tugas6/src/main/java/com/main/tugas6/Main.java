@@ -97,6 +97,26 @@ public class Main extends Application {
         exitButton.setOnAction(e -> System.exit(0));
         grid.add(exitButton, 0, 2);
 
+        Button verApl = new Button("VerSion");
+        verApl.setOnAction(e ->{
+            GridPane gridver = new GridPane();
+            gridver.setAlignment(Pos.CENTER);
+            gridver.setHgap(10);
+            gridver.setVgap(10);
+            gridver.setPadding(new Insets(15, 15, 15, 15));
+            Label labbVer = new Label("Ver:1.1");
+            gridver.add(labbVer,0,0);
+
+            Button backButton = new Button("Back");
+            backButton.setOnAction(f -> start(primaryStage));
+            gridver.add(backButton, 0, 4);
+
+            Scene scenVer = new Scene(gridver,420,350);
+            primaryStage.setScene(scenVer);
+            primaryStage.show();
+                });
+        grid.add(verApl,1,4);
+
         Scene scene = new Scene(grid, 420, 350);
         primaryStage.setTitle("Form Login");
         primaryStage.setScene(scene);

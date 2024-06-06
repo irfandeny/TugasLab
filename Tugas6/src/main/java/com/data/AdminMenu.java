@@ -161,14 +161,13 @@ public class AdminMenu extends User implements iMenu {
         gridView.setVgap(10);
         gridView.setPadding(new Insets(25, 25, 25, 25));
 
-        TableView<Buku> tableAdmin = displayBooks();
+        TableView<Buku> tableAdmin = new TableView<>();
+        tableAdmin.getItems().clear();
+        tableAdmin = displayBooks();
         gridView.add(tableAdmin, 0, 1);
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e ->{
-            tableAdmin.getItems().clear();
-            showMenu(primaryStage);
-        });
+        backButton.setOnAction(e -> showMenu(primaryStage));
         gridView.add(backButton, 0, 2);
 
         Scene viewBooksScene = new Scene(gridView, 420, 350);

@@ -18,7 +18,7 @@ public class User {
 
     public TableView<Buku> displayBooks() {
         TableView<Buku> tableDisplay = new TableView<>();
-        tableDisplay.setEditable(false);
+        tableDisplay.setEditable(true);
 
         TableColumn<Buku, String> idColumn = new TableColumn<>("ID");
         idColumn.setMinWidth(50);
@@ -46,8 +46,9 @@ public class User {
         return tableDisplay;
     }
 
-    protected void updateTableItems(TableView<Buku> table) {
+    protected void updateTableItems(TableView<Buku> tableDisplay) {
         ObservableList<Buku> books = FXCollections.observableArrayList(bookList);
-        table.setItems(books);
+        tableDisplay.getItems().clear();
+        tableDisplay.setItems(books);
     }
 }
